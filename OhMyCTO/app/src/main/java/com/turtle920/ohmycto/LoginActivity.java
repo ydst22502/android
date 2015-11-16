@@ -1,6 +1,8 @@
 package com.turtle920.ohmycto;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.InputType;
@@ -62,14 +64,21 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                             Log.d("TAG", "Json from server: " + response);//response为服务器返回的Json
                             Gson gson = new Gson();
                             VolleyLogin loginResponse = gson.fromJson(response, VolleyLogin.class);
-                            /****
-                             * userid和token需要存在本地
-                             */
+
                             Log.d("TAG", "token decode from Json: "+loginResponse.token);
                             if (loginResponse.flag == 1) {
+                                //存一下userid和token
+                                SharedPreferences mySharedPreferences= getSharedPreferences("login", Activity.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = mySharedPreferences.edit();
+                                editor.putString("userid", loginResponse.userid);
+                                editor.putString("token", loginResponse.token);
+                                editor.apply();
+
                                 TextView textView = (TextView) findViewById(R.id.textView_loginActivity_error);
                                 textView.setText("正在登陆...");
+
                                 Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                 startActivity(intent);
                             } else {
                                 TextView textView = (TextView) findViewById(R.id.textView_loginActivity_error);
