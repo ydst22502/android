@@ -24,11 +24,16 @@
         android:layout_height="wrap_content"
         android:hint="密码"
         android:password="true" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="（新用户直接输入邮箱地址和密码，点击注册）"/>
 
     <TextView
         android:id="@+id/textView_loginActivity_error"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:textColor="@color/colorError"/>
 
     <Button
         android:id="@+id/button_loginActivity_login"

@@ -13,7 +13,7 @@ public class WelcomeActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_welcome);
+        //setContentView(R.layout.activity_welcome);
 
         SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
         String userid = sharedPreferences.getString("userid", "");
@@ -23,7 +23,7 @@ public class WelcomeActivity extends AppCompatActivity {
 
         if (token.equals("")) {
             Intent intent = new Intent(WelcomeActivity.this, LoginActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         } else {
             Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
@@ -31,7 +31,7 @@ public class WelcomeActivity extends AppCompatActivity {
             bundle.putString("userid", userid);
             bundle.putString("token", token);
             intent.putExtras(bundle);
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         }
 
