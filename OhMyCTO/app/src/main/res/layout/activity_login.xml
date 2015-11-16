@@ -15,18 +15,20 @@
         android:id="@+id/editText_loginActivity_email"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="邮箱" />
+        android:hint="邮箱"
+        android:inputType="textEmailAddress" />
 
     <EditText
         android:id="@+id/editText_loginActivity_password"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:hint="密码" />
+        android:hint="密码"
+        android:password="true" />
 
     <TextView
+        android:id="@+id/textView_loginActivity_error"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/textView_loginActivity_error"/>
+        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/button_loginActivity_login"
