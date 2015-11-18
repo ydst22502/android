@@ -59,7 +59,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             Log.d("TAG", "editText: " + this.email + " " + this.password);
 
             RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "tb-userinfo/login",
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/login",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -80,7 +80,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 TextView textView = (TextView) findViewById(R.id.textView_loginActivity_error);
                                 textView.setText("正在登陆...");
 
-                                Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+                                Intent intent = new Intent(LoginActivity.this, HomePageActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                 Bundle bundle = new Bundle();
                                 bundle.putString("userid", loginResponse.userid);
@@ -122,10 +122,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             password = editText2.getText().toString();
 
             RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "tb-userinfo/duplication-of-email",
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/duplication-of-email",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
+                            Log.d("TAG", "验证邮箱 "+response);
                             if (response.equals("1")) {//没有重复邮箱
 
                                 TextView textView = (TextView) findViewById(R.id.textView_loginActivity_error);

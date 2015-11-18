@@ -50,7 +50,7 @@ public class ChooseUserNameActivity extends AppCompatActivity implements View.On
             EditText editText1 = (EditText) findViewById(R.id.editText_chooseUserNameActivity_username);
             username = editText1.getText().toString();
             RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "tb-userinfo/duplication-of-name",
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/duplication-of-name",
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
@@ -62,7 +62,7 @@ public class ChooseUserNameActivity extends AppCompatActivity implements View.On
                                 TextView textView = (TextView) findViewById(R.id.textView_chooseUserNameActivity_error);
                                 textView.setText("正在创建新用户...");
                                 RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-                                StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "tb-userinfo/insert",
+                                StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/create",
                                         new Response.Listener<String>() {
                                             @Override
                                             public void onResponse(String response) {
@@ -82,7 +82,7 @@ public class ChooseUserNameActivity extends AppCompatActivity implements View.On
                                                 /***********
                                                  * 跳转到homepage
                                                  ***********/
-                                                Intent intent = new Intent(ChooseUserNameActivity.this, MainActivity.class);
+                                                Intent intent = new Intent(ChooseUserNameActivity.this, HomePageActivity.class);
                                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                                                 Bundle bundle = new Bundle();
                                                 bundle.putString("userid", insertResponse.userid);

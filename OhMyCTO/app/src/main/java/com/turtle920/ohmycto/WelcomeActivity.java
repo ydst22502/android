@@ -26,7 +26,7 @@ public class WelcomeActivity extends AppCompatActivity {
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
             startActivity(intent);
         } else {
-            Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+            Intent intent = new Intent(WelcomeActivity.this, HomePageActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("userid", userid);
             bundle.putString("token", token);
