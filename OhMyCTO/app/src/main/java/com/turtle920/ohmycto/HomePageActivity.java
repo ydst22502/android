@@ -16,6 +16,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.AbsListView;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -41,7 +42,7 @@ import android.widget.AbsListView;
 import android.widget.AbsListView.OnScrollListener;
 
 public class HomePageActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
+        implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener, AdapterView.OnItemClickListener {
 
     String userid;
     String token;
@@ -56,9 +57,7 @@ public class HomePageActivity extends AppCompatActivity
         setContentView(R.layout.activity_home_page);
 
         Intent intent = this.getIntent();
-        Log.d("TAG", "111");
         bundle = intent.getExtras();
-        Log.d("TAG", bundle.toString());
 
         userid = bundle.getString("userid");
         token = bundle.getString("token");
@@ -68,15 +67,6 @@ public class HomePageActivity extends AppCompatActivity
 
         listView = (ListView) findViewById(R.id.listView_homePageActivity_postContent);
         listItem = new ArrayList<HashMap<String, Object>>();
-
-        for (int i = 0; i < 10; i++) {
-            HashMap<String, Object> map = new HashMap<String, Object>();
-            map.put("ItemImage", R.drawable.sample_avatar);//加入图片
-            map.put("ItemTitle", "第" + i + "行");
-            map.put("ItemText", "这是第" + i + "行");
-            map.put("ItemTime", "time");
-            listItem.add(map);
-        }
 
         mSimpleAdapter = new SimpleAdapter(this, listItem,//需要绑定的数据
                 R.layout.item_home_page,//每一行的布局
@@ -90,6 +80,7 @@ public class HomePageActivity extends AppCompatActivity
         );
 
         listView.setAdapter(mSimpleAdapter);
+        listView.setOnItemClickListener(this);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);//发帖按钮
         fab.setOnClickListener(new View.OnClickListener() {
@@ -115,9 +106,6 @@ public class HomePageActivity extends AppCompatActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        TextView textView = (TextView) findViewById(R.id.textView_homePageActivity_info);
-                        textView.setText(response);
-
                         Gson gson = new Gson();
                         List<JsonHomePageList> homePageLists = gson.fromJson(response, new TypeToken<List<JsonHomePageList>>() {
                         }.getType());
@@ -125,13 +113,14 @@ public class HomePageActivity extends AppCompatActivity
                         listItem.clear();
                         for (int i = 0; i < homePageLists.size(); i++) {
                             JsonHomePageList homePageList = homePageLists.get(i);
-                            Log.d("TAG", homePageList.toString());
 
                             HashMap<String, Object> map = new HashMap<String, Object>();
                             map.put("ItemImage", R.drawable.sample_avatar);//加入图片
                             map.put("ItemTitle", homePageList.title);
                             map.put("ItemText", homePageList.content);
                             map.put("ItemTime", homePageList.posttime);
+                            //这个地方精髓哈，压一个postId到数据数组里面，但是不和adapter绑定
+                            map.put("ItemPostId", homePageList.postid);
                             listItem.add(map);
                         }
 
@@ -166,6 +155,18 @@ public class HomePageActivity extends AppCompatActivity
 
             Intent intent = new Intent(HomePageActivity.this, WelcomeActivity.class);
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        if (parent.getId() == R.id.listView_homePageActivity_postContent) {
+            Log.d("TAG", "parent: " + parent.toString() + " postid: " + listItem.get((int)id).get("ItemPostId") + " id: " + id);
+            Intent intent = new Intent(HomePageActivity.this, DetailActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("postid", ""+listItem.get((int)id).get("ItemPostId"));
+            intent.putExtras(bundle);
             startActivity(intent);
         }
     }
@@ -218,9 +219,6 @@ public class HomePageActivity extends AppCompatActivity
                     new Response.Listener<String>() {
                         @Override
                         public void onResponse(String response) {
-                            TextView textView = (TextView) findViewById(R.id.textView_homePageActivity_info);
-                            textView.setText(response);
-
                             Gson gson = new Gson();
                             List<JsonHomePageList> homePageLists = gson.fromJson(response, new TypeToken<List<JsonHomePageList>>() {
                             }.getType());
