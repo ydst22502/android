@@ -17,6 +17,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Button;
+import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -27,8 +29,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class HomePageActivity extends AppCompatActivity
@@ -37,6 +43,9 @@ public class HomePageActivity extends AppCompatActivity
     String userid;
     String token;
     Bundle bundle;
+    private ListView listView;
+    private ArrayList<HashMap<String, Object>> listItem;
+    private SimpleAdapter mSimpleAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +62,31 @@ public class HomePageActivity extends AppCompatActivity
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+
+        listView = (ListView) findViewById(R.id.listView_homePageActivity_postContent);
+        listItem = new ArrayList<HashMap<String, Object>>();
+
+        for (int i = 0; i < 10; i++) {
+            HashMap<String, Object> map = new HashMap<String, Object>();
+            map.put("ItemImage", R.drawable.sample_avatar);//加入图片
+            map.put("ItemTitle", "第" + i + "行");
+            map.put("ItemText", "这是第" + i + "行");
+            map.put("ItemTime", "time");
+            listItem.add(map);
+        }
+
+        mSimpleAdapter = new SimpleAdapter(this, listItem,//需要绑定的数据
+                R.layout.item_home_page,//每一行的布局
+                //动态数组中的数据源的键对应到定义布局的View中
+                new String[]{"ItemImage", "ItemTitle", "ItemText", "ItemTime"},
+                new int[]{R.id.imageView_homePageList_avatar,
+                        R.id.textView_homePageList_title,
+                        R.id.textView_homePageList_content,
+                        R.id.textView_homePageList_postTime
+                }
+        );
+
+        listView.setAdapter(mSimpleAdapter);
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);//发帖按钮
         fab.setOnClickListener(new View.OnClickListener() {
@@ -78,8 +112,28 @@ public class HomePageActivity extends AppCompatActivity
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        TextView textView = (TextView)findViewById(R.id.textView_homePageActivity_info);
+                        TextView textView = (TextView) findViewById(R.id.textView_homePageActivity_info);
                         textView.setText(response);
+
+                        Gson gson = new Gson();
+                        List<JsonHomePageList> homePageLists = gson.fromJson(response, new TypeToken<List<JsonHomePageList>>() {
+                        }.getType());
+
+                        listItem.clear();
+                        for (int i = 0; i < homePageLists.size(); i++) {
+                            JsonHomePageList homePageList = homePageLists.get(i);
+                            Log.d("TAG", homePageList.toString());
+
+                            HashMap<String, Object> map = new HashMap<String, Object>();
+                            map.put("ItemImage", R.drawable.sample_avatar);//加入图片
+                            map.put("ItemTitle", homePageList.title);
+                            map.put("ItemText", homePageList.content);
+                            map.put("ItemTime", homePageList.posttime);
+                            listItem.add(map);
+                        }
+
+                        mSimpleAdapter.notifyDataSetChanged();
+
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -138,7 +192,7 @@ public class HomePageActivity extends AppCompatActivity
         TextView textView2 = (TextView) findViewById(R.id.textView_navHeaderHomePage_selfIntroduction);
         textView2.setText("token: " + token);
 
-        TextView textView3 = (TextView)findViewById(R.id.textView_homePageActivity_logout);
+        TextView textView3 = (TextView) findViewById(R.id.textView_homePageActivity_logout);
         textView3.setOnClickListener(this);
         return true;
     }
