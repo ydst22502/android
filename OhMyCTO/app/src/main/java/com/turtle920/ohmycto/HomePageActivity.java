@@ -74,7 +74,7 @@ public class HomePageActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
         RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "post/all",
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "post/ask-by-offset-and-limit",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -90,6 +90,8 @@ public class HomePageActivity extends AppCompatActivity
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> map = new HashMap<String, String>();
+                map.put("offset", "-1");
+                map.put("limit", "10");
                 return map;
             }
         };
