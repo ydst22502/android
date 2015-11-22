@@ -5,7 +5,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
 import android.view.View;
 import android.support.design.widget.NavigationView;
@@ -16,6 +15,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AbsListView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
@@ -36,6 +36,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 
 public class HomePageActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener, View.OnClickListener {
@@ -145,7 +148,7 @@ public class HomePageActivity extends AppCompatActivity
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> map = new HashMap<String, String>();
                 map.put("offset", "-1");
-                map.put("limit", "10");
+                map.put("limit", "-1");
                 return map;
             }
         };
@@ -208,6 +211,55 @@ public class HomePageActivity extends AppCompatActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_refresh) {
+            //找服务器重新请求数据
+            RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
+            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "post/ask-by-offset-and-limit",
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            TextView textView = (TextView) findViewById(R.id.textView_homePageActivity_info);
+                            textView.setText(response);
+
+                            Gson gson = new Gson();
+                            List<JsonHomePageList> homePageLists = gson.fromJson(response, new TypeToken<List<JsonHomePageList>>() {
+                            }.getType());
+
+                            listItem.clear();
+                            for (int i = 0; i < homePageLists.size(); i++) {
+                                JsonHomePageList homePageList = homePageLists.get(i);
+                                Log.d("TAG", homePageList.toString());
+
+                                HashMap<String, Object> map = new HashMap<String, Object>();
+                                map.put("ItemImage", R.drawable.sample_avatar);//加入图片
+                                map.put("ItemTitle", homePageList.title);
+                                map.put("ItemText", homePageList.content);
+                                map.put("ItemTime", homePageList.posttime);
+                                listItem.add(map);
+                            }
+
+                            mSimpleAdapter.notifyDataSetChanged();
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            Log.e("TAG", error.getMessage(), error);
+                        }
+                    }) {
+                @Override
+                protected Map<String, String> getParams() throws AuthFailureError {
+                    Map<String, String> map = new HashMap<String, String>();
+                    map.put("offset", "-1");
+                    map.put("limit", "-1");
+                    return map;
+                }
+            };
+            mQueue.add(stringRequest);
+
+            mSimpleAdapter.notifyDataSetChanged();
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -236,4 +288,5 @@ public class HomePageActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 }
