@@ -106,7 +106,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
                             editText.clearFocus();
                             InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                             imm.hideSoftInputFromWindow(editText.getWindowToken(), 0) ;
-                            
+
                             requestReplyOfThisPost(postid);
                         }
                     }
