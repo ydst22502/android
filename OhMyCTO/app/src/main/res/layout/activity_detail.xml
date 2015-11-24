@@ -1,88 +1,113 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     tools:context="com.turtle920.ohmycto.DetailActivity">
 
-    <ScrollView
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:src="@drawable/sample_avatar" />
 
         <LinearLayout
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal">
-
-                <ImageView
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:src="@drawable/sample_avatar" />
-
-                <LinearLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <TextView
-                        android:id="@+id/textView_detailActivity_username"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                    <TextView
-                        android:id="@+id/textView_detailActivity_userinfo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content" />
-
-                </LinearLayout>
-
-            </LinearLayout>
-
             <TextView
-                android:id="@+id/textView_detailActivity_title"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="加载中..."
-                android:textSize="@dimen/header2" />
-
-            <TextView
-                android:id="@+id/textView_detailActivity_content"
+                android:id="@+id/textView_detailActivity_username"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
             <TextView
-                android:id="@+id/textView_detailActivity_posttime"
+                android:id="@+id/textView_detailActivity_userinfo"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center">
-
-                <TextView
-                    android:id="@+id/textView_detailActivity_commentButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="评论"
-                    android:textSize="@dimen/header2" />
-
-                <TextView
-                    android:id="@+id/textView_detailActivity_msgButton"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="20dp"
-                    android:text="私信"
-                    android:textSize="@dimen/header2" />
-            </LinearLayout>
 
         </LinearLayout>
 
-    </ScrollView>
+    </LinearLayout>
 
-</RelativeLayout>
+    <TextView
+        android:id="@+id/textView_detailActivity_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="加载中..."
+        android:textSize="@dimen/header2" />
+
+    <TextView
+        android:id="@+id/textView_detailActivity_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/textView_detailActivity_posttime"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center">
+
+        <TextView
+            android:id="@+id/textView_detailActivity_commentButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="评论"
+            android:textSize="@dimen/header2" />
+
+        <TextView
+            android:id="@+id/textView_detailActivity_msgButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:text="私信"
+            android:textSize="@dimen/header2" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/textView_detailActivity_replyCount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="回复加载中..." />
+
+    <ListView
+        android:id="@+id/listView_detailActivity_reply"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1"></ListView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:focusable="true"
+        android:focusableInTouchMode="true">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:hint="评论一下"
+            android:id="@+id/editText_detailActiviy_reply"/>
+
+        <Button
+            android:id="@+id/button_detailActivity_reply"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:text="发送" />
+
+    </LinearLayout>
+
+
+</LinearLayout>

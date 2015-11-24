@@ -119,7 +119,7 @@ public class HomePageActivity extends AppCompatActivity
                             map.put("ItemTitle", homePageList.title);
                             map.put("ItemText", homePageList.content);
                             map.put("ItemTime", homePageList.posttime);
-                            //这个地方精髓哈，压一个postId到数据数组里面，但是不和adapter绑定
+                            //这个地方精髓哈，压postId到数据数组里面，但是不和adapter绑定
                             map.put("ItemPostId", homePageList.postid);
                             listItem.add(map);
                         }
@@ -166,6 +166,8 @@ public class HomePageActivity extends AppCompatActivity
             Intent intent = new Intent(HomePageActivity.this, DetailActivity.class);
             Bundle bundle = new Bundle();
             bundle.putString("postid", ""+listItem.get((int)id).get("ItemPostId"));
+            //在这把username传过去可以加强用户体验
+            //bundle.putString("username", username);
             intent.putExtras(bundle);
             startActivity(intent);
         }

@@ -28,12 +28,15 @@ public class ChooseUserNameActivity extends AppCompatActivity implements View.On
     String email;
     String password;
     String username;
-    VolleyLogin insertResponse;
+
+    RequestQueue mQueue;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_user_name);
+
+        mQueue = Volley.newRequestQueue(getApplicationContext());
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
@@ -49,89 +52,97 @@ public class ChooseUserNameActivity extends AppCompatActivity implements View.On
         if (v.getId() == R.id.button_chooseUserNameActivity_finish) {
             EditText editText1 = (EditText) findViewById(R.id.editText_chooseUserNameActivity_username);
             username = editText1.getText().toString();
-            RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-            StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/duplication-of-name",
-                    new Response.Listener<String>() {
-                        @Override
-                        public void onResponse(String response) {
-                            Log.d("TAG", "choose name response: " + response);
-                            if (response.equals("1")) {//没有重名
-                                /******
-                                 * 插入username, email, password到数据库
-                                 */
-                                TextView textView = (TextView) findViewById(R.id.textView_chooseUserNameActivity_error);
-                                textView.setText("正在创建新用户...");
-                                RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
-                                StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/create",
-                                        new Response.Listener<String>() {
-                                            @Override
-                                            public void onResponse(String response) {
-                                                Log.d("TAG", response);//response为服务器返回的userid 和token的Json
-                                                Gson gson = new Gson();
-                                                insertResponse = gson.fromJson(response, VolleyLogin.class);
 
-                                                /***********
-                                                 * 存一下userid 和token
-                                                 ***********/
-                                                SharedPreferences mySharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
-                                                SharedPreferences.Editor editor = mySharedPreferences.edit();
-                                                editor.putString("userid", insertResponse.userid);
-                                                editor.putString("token", insertResponse.token);
-                                                editor.apply();
+            checkDuplicationOfName(username);
 
-                                                /***********
-                                                 * 跳转到homepage
-                                                 ***********/
-                                                Intent intent = new Intent(ChooseUserNameActivity.this, HomePageActivity.class);
-                                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                                                Bundle bundle = new Bundle();
-                                                bundle.putString("userid", insertResponse.userid);
-                                                bundle.putString("token", insertResponse.token);
-                                                intent.putExtras(bundle);
-                                                startActivity(intent);
-
-                                            }
-                                        }, new Response.ErrorListener() {
-                                    @Override
-                                    public void onErrorResponse(VolleyError error) {
-                                        Log.e("TAG", error.getMessage(), error);
-                                    }
-                                }) {
-                                    @Override
-                                    protected Map<String, String> getParams() throws AuthFailureError {
-                                        Map<String, String> map = new HashMap<String, String>();
-                                        map.put("username", username);
-                                        map.put("email", email);
-                                        map.put("authkey", password);
-                                        return map;
-                                    }
-                                };
-
-                                mQueue.add(stringRequest);
-                                /*********************以上插入数据库******************************/
-
-
-                            } else {//有重名
-                                TextView textView = (TextView) findViewById(R.id.textView_chooseUserNameActivity_error);
-                                textView.setText("有人已经霸占这个名字了，换一个咯");
-                            }
-                        }
-                    }, new Response.ErrorListener() {
-                @Override
-                public void onErrorResponse(VolleyError error) {
-                    Log.e("TAG", error.getMessage(), error);
-                }
-            }) {
-                @Override
-                protected Map<String, String> getParams() throws AuthFailureError {
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.put("username", username);
-                    Log.d("TAG", "map put username: " + username);
-                    return map;
-                }
-            };
-
-            mQueue.add(stringRequest);
         }
+    }
+
+    private void checkDuplicationOfName(final String username){
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/duplication-of-name",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("TAG", "choose name response: " + response);
+                        if (response.equals("1")) {//没有重名
+
+
+                            TextView textView = (TextView) findViewById(R.id.textView_chooseUserNameActivity_error);
+                            textView.setText("正在创建新用户...");
+
+                            /*********************插入数据库******************************/
+                            insertNewUserIntoDB(username, email, password);
+
+                        } else {//有重名
+                            TextView textView = (TextView) findViewById(R.id.textView_chooseUserNameActivity_error);
+                            textView.setText("有人已经霸占这个名字了，换一个咯");
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", error.getMessage(), error);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("username", username);
+                Log.d("TAG", "map put username: " + username);
+                return map;
+            }
+        };
+
+        mQueue.add(stringRequest);
+    }
+
+    private void insertNewUserIntoDB(final String username, final String email, final String password){
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/create",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Log.d("TAG", response);//response为服务器返回的userid 和token的Json
+                        Gson gson = new Gson();
+                        VolleyLogin insertResponse = gson.fromJson(response, VolleyLogin.class);
+
+                        /***********
+                         * 存一下userid 和token
+                         ***********/
+                        SharedPreferences mySharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = mySharedPreferences.edit();
+                        editor.putString("userid", insertResponse.userid);
+                        editor.putString("token", insertResponse.token);
+                        editor.apply();
+
+                        /***********
+                         * 跳转到homepage
+                         ***********/
+                        Intent intent = new Intent(ChooseUserNameActivity.this, HomePageActivity.class);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        Bundle bundle = new Bundle();
+                        bundle.putString("userid", insertResponse.userid);
+                        bundle.putString("token", insertResponse.token);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", error.getMessage(), error);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("username", username);
+                map.put("email", email);
+                map.put("authkey", password);
+                return map;
+            }
+        };
+
+        mQueue.add(stringRequest);
     }
 }
