@@ -8,4 +8,5 @@ public class JsonUserinfo {
     String imagedir;
     String authkey;
     String authsalt;
+    String introduction;
 }

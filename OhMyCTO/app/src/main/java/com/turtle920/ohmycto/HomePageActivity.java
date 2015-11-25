@@ -1,6 +1,7 @@
 package com.turtle920.ohmycto;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -15,9 +16,11 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -51,10 +54,14 @@ public class HomePageActivity extends AppCompatActivity
     private ArrayList<HashMap<String, Object>> listItem;
     private SimpleAdapter mSimpleAdapter;
 
+    RequestQueue mQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home_page);
+
+        mQueue = Volley.newRequestQueue(getApplicationContext());
 
         Intent intent = this.getIntent();
         bundle = intent.getExtras();
@@ -101,7 +108,6 @@ public class HomePageActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "post/ask-by-offset-and-limit",
                 new Response.Listener<String>() {
                     @Override
@@ -157,15 +163,20 @@ public class HomePageActivity extends AppCompatActivity
             intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
         }
+
+        if (v.getId() == R.id.imageView_homePageNav_avatar) {
+            Intent intent = new Intent(HomePageActivity.this, MyPageActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         if (parent.getId() == R.id.listView_homePageActivity_postContent) {
-            Log.d("TAG", "parent: " + parent.toString() + " postid: " + listItem.get((int)id).get("ItemPostId") + " id: " + id);
+            Log.d("TAG", "parent: " + parent.toString() + " postid: " + listItem.get((int) id).get("ItemPostId") + " id: " + id);
             Intent intent = new Intent(HomePageActivity.this, DetailActivity.class);
             Bundle bundle = new Bundle();
-            bundle.putString("postid", ""+listItem.get((int)id).get("ItemPostId"));
+            bundle.putString("postid", "" + listItem.get((int) id).get("ItemPostId"));
             //在这把username传过去可以加强用户体验
             //bundle.putString("username", username);
             intent.putExtras(bundle);
@@ -192,15 +203,46 @@ public class HomePageActivity extends AppCompatActivity
          */
         getMenuInflater().inflate(R.menu.home_page, menu);
 
-        TextView textView1 = (TextView) findViewById(R.id.textView_navHeaderHomePage_username);
-        textView1.setText("userid: " + userid);
-
-        TextView textView2 = (TextView) findViewById(R.id.textView_navHeaderHomePage_selfIntroduction);
-        textView2.setText("token: " + token);
+        requestUserInfo(userid);
 
         TextView textView3 = (TextView) findViewById(R.id.textView_homePageActivity_logout);
         textView3.setOnClickListener(this);
+
+        View view1 = (View) findViewById(R.id.imageView_homePageNav_avatar);
+        view1.setOnClickListener(this);
         return true;
+    }
+
+    private void requestUserInfo(final String userid){
+
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/get-userinfo",
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        Gson gson = new Gson();
+                        JsonUserinfo userinfo = gson.fromJson(response, JsonUserinfo.class);
+
+                        TextView textView1 = (TextView) findViewById(R.id.textView_navHeaderHomePage_username);
+                        textView1.setText(userinfo.username);
+
+                        TextView textView2 = (TextView) findViewById(R.id.textView_navHeaderHomePage_selfIntroduction);
+                        textView2.setText("userid:"+userid+"的简介（待完善）");
+
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.e("TAG", error.getMessage(), error);
+            }
+        }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> map = new HashMap<String, String>();
+                map.put("userid", userid);
+                return map;
+            }
+        };
+        mQueue.add(stringRequest);
     }
 
     @Override
@@ -216,7 +258,6 @@ public class HomePageActivity extends AppCompatActivity
         }
         if (id == R.id.action_refresh) {
             //找服务器重新请求数据
-            RequestQueue mQueue = Volley.newRequestQueue(getApplicationContext());
             StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "post/ask-by-offset-and-limit",
                     new Response.Listener<String>() {
                         @Override

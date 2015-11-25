@@ -17,7 +17,7 @@
         android:gravity="bottom">
 
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imageView_homePageNav_avatar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="@dimen/nav_header_vertical_spacing"
@@ -35,13 +35,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="@dimen/nav_header_vertical_spacing"
-        android:text="Android Studio"
+        android:text="用户名"
         android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
     <TextView
         android:id="@+id/textView_navHeaderHomePage_selfIntroduction"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="android.studio@android.com" />
+        android:text="自我描述(功能待完善)" />
 
 </LinearLayout>

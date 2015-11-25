@@ -39,6 +39,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
 
     RequestQueue mQueue;
     long postid;
+    String useridOfThisPost;//发帖人信息，用来传到intent里
 
     private ListView listView;
     private ArrayList<HashMap<String, Object>> listItem;
@@ -73,8 +74,12 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
         requestPostContent(postid);//请求post详情
         requestReplyOfThisPost(postid);//请求reply内容
 
+        View view1 = (View)findViewById(R.id.linearLayout_detailActivity_poster);
+        view1.setOnClickListener(this);
+
         Button button = (Button)findViewById(R.id.button_detailActivity_reply);
         button.setOnClickListener(this);
+
     }
 
     @Override
@@ -91,6 +96,19 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
             insertReply(postid, Long.parseLong(userid), replyContent);
 
         }
+
+        if (v.getId() == R.id.linearLayout_detailActivity_poster){
+            Intent intent = new Intent(DetailActivity.this, PersonActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("userid", useridOfThisPost);
+            intent.putExtras(bundle);
+            startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        //点击回复该用户
     }
 
     private void insertReply(final long postid, final long userid, final String content){
@@ -130,11 +148,6 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
         mQueue.add(stringRequest);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        //点击回复该用户
-    }
-
     private void requestPostContent(final long postid) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "post/ask-by-postid",
@@ -146,6 +159,7 @@ public class DetailActivity extends AppCompatActivity implements AdapterView.OnI
                         JsonDetail detail = gson.fromJson(response, JsonDetail.class);
 
                         requestUserInfo(detail.userid);//请求发帖用户信息
+                        useridOfThisPost = ""+detail.userid;
 
                         TextView textView3 = (TextView) findViewById(R.id.textView_detailActivity_title);
                         textView3.setText(detail.title);

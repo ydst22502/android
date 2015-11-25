@@ -20,12 +20,17 @@
             android:id="@+id/textView_homePageList_title"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxEms="10"
+            android:singleLine="true"
             android:text="标题" />
 
         <TextView
             android:id="@+id/textView_homePageList_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="3"
             android:text="内容" />
 
         <TextView
