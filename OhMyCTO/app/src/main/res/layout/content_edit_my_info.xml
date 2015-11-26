@@ -29,6 +29,15 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:text="上传头像:"
+        android:textSize="@dimen/body1"/>
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:src="@drawable/sample_avatar"/>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:singleLine="true"
         android:text="编辑个人简介:"
         android:textSize="@dimen/body1"/>
