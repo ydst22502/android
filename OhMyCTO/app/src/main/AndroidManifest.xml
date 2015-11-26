@@ -32,7 +32,11 @@
             android:label="@string/title_activity_detail"
             android:theme="@style/AppTheme" />
         <activity android:name=".PersonActivity" />
-        <activity android:name=".MyPageActivity"></activity>
+        <activity android:name=".MyPageActivity" />
+        <activity
+            android:name=".EditMyInfoActivity"
+            android:label="@string/title_activity_edit_my_info"
+            android:theme="@style/AppTheme.NoActionBar"></activity>
     </application>
 
 </manifest>

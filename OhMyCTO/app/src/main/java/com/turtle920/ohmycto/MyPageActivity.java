@@ -1,10 +1,12 @@
 package com.turtle920.ohmycto;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -19,7 +21,7 @@ import com.google.gson.Gson;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyPageActivity extends AppCompatActivity {
+public class MyPageActivity extends AppCompatActivity implements View.OnClickListener{
 
     RequestQueue mQueue;
     @Override
@@ -34,6 +36,17 @@ public class MyPageActivity extends AppCompatActivity {
         mQueue = Volley.newRequestQueue(getApplicationContext());
         requestUserInfo(userid);
 
+        TextView textView1 = (TextView)findViewById(R.id.textView_myPageActivity_edit);
+        textView1.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (v.getId() == R.id.textView_myPageActivity_edit){
+            Intent intent = new Intent(MyPageActivity.this, EditMyInfoActivity.class);
+            startActivity(intent);
+        }
     }
 
     private void requestUserInfo(final String userid) {
@@ -72,4 +85,6 @@ public class MyPageActivity extends AppCompatActivity {
         };
         mQueue.add(stringRequest);
     }
+
+
 }
