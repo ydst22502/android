@@ -3,10 +3,12 @@ package com.turtle920.ohmycto;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.android.volley.AuthFailureError;
@@ -14,16 +16,21 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.google.gson.Gson;
 
+import java.io.UnsupportedEncodingException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyPageActivity extends AppCompatActivity implements View.OnClickListener{
+public class MyPageActivity extends AppCompatActivity implements View.OnClickListener {
 
     RequestQueue mQueue;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,18 +42,59 @@ public class MyPageActivity extends AppCompatActivity implements View.OnClickLis
 
         mQueue = Volley.newRequestQueue(getApplicationContext());
         requestUserInfo(userid);
+        requestAvatar(userid);
 
-        TextView textView1 = (TextView)findViewById(R.id.textView_myPageActivity_edit);
+        TextView textView1 = (TextView) findViewById(R.id.textView_myPageActivity_edit);
         textView1.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
-        if (v.getId() == R.id.textView_myPageActivity_edit){
+        if (v.getId() == R.id.textView_myPageActivity_edit) {
             Intent intent = new Intent(MyPageActivity.this, EditMyInfoActivity.class);
             startActivity(intent);
         }
+    }
+
+    private void requestAvatar(final String userid) {
+
+        ImageRequest imageRequest = new ImageRequest(Config.USER_ASSETS_URL + md5(userid) + "/images/avatar.jpg",
+                new Response.Listener<Bitmap>() {
+
+                    @Override
+                    public void onResponse(Bitmap response) {
+                        Log.d("TAG", response.toString());
+                        ImageView imageView = (ImageView) findViewById(R.id.imageView_myPageActivity_avatar);
+                        imageView.setImageBitmap(response);
+                    }
+                }, 0, 0, null, null);
+        mQueue.add(imageRequest);
+    }
+
+    private static final String md5(final String s) {
+        final String MD5 = "MD5";
+        try {
+            // Create MD5 Hash
+            MessageDigest digest = java.security.MessageDigest
+                    .getInstance(MD5);
+            digest.update(s.getBytes());
+            byte messageDigest[] = digest.digest();
+
+            // Create Hex String
+            StringBuilder hexString = new StringBuilder();
+            for (byte aMessageDigest : messageDigest) {
+                String h = Integer.toHexString(0xFF & aMessageDigest);
+                while (h.length() < 2)
+                    h = "0" + h;
+                hexString.append(h);
+            }
+            return hexString.toString();
+
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return "";
     }
 
     private void requestUserInfo(final String userid) {
