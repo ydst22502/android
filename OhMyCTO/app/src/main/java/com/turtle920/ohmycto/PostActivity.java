@@ -41,11 +41,9 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
-        Intent intent = this.getIntent();
-        Bundle bundle = intent.getExtras();
-
-        userid = bundle.getString("userid");
-        token = bundle.getString("token");
+        SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+        userid = sharedPreferences.getString("userid", "");
+        token = sharedPreferences.getString("token", "");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -84,11 +82,6 @@ public class PostActivity extends AppCompatActivity implements Toolbar.OnMenuIte
                             }else{
                                 Intent intent = new Intent(PostActivity.this, HomePageActivity.class);
                                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_NO_ANIMATION);
-                                Bundle bundle = new Bundle();
-                                bundle.putString("userid", userid);
-                                bundle.putString("token", token);
-                                bundle.putString("token", token);
-                                intent.putExtras(bundle);
                                 startActivity(intent);
                             }
                         }

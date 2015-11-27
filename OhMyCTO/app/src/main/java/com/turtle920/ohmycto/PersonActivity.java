@@ -25,6 +25,8 @@ import java.util.Map;
 public class PersonActivity extends AppCompatActivity implements View.OnClickListener {
 
     RequestQueue mQueue;
+    String username;//此页显示此用户名的个人信息
+    String userid;//此页显示此id的个人信息
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,7 +37,7 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
 
         Intent intent = this.getIntent();
         Bundle bundle = intent.getExtras();
-        String userid = bundle.getString("userid");
+        userid = bundle.getString("userid");
 
         requestUserInfo(userid);
 
@@ -46,7 +48,12 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
     @Override
     public void onClick(View v) {
         if (v.getId() == R.id.textView_personActivity_message) {
-
+            Intent intent = new Intent(PersonActivity.this, SendMessageActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString("receiverId", userid);
+            bundle.putString("receiverName", username);
+            intent.putExtras(bundle);
+            startActivity(intent);
         }
     }
 
@@ -60,6 +67,7 @@ public class PersonActivity extends AppCompatActivity implements View.OnClickLis
 
                         TextView textView1 = (TextView) findViewById(R.id.textView_personActivity_username);
                         textView1.setText(userinfo.username);
+                        username = userinfo.username;
                         TextView textView2 = (TextView) findViewById(R.id.textView_personActivity_email);
                         textView2.setText(userinfo.email);
                         TextView textView3 = (TextView) findViewById(R.id.textView_personActivity_introduction);

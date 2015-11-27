@@ -3,16 +3,16 @@
 
     <group android:checkableBehavior="single">
         <item
-            android:id="@+id/nav_camara"
-            android:icon="@android:drawable/ic_menu_camera"
+            android:id="@+id/nav_homePage"
+            android:icon="@android:drawable/ic_menu_mapmode"
             android:title="首页" />
         <item
             android:id="@+id/nav_gallery"
             android:icon="@android:drawable/ic_menu_gallery"
             android:title="发帖记录" />
         <item
-            android:id="@+id/nav_slideshow"
-            android:icon="@android:drawable/ic_menu_slideshow"
+            android:id="@+id/nav_myMessage"
+            android:icon="@android:drawable/ic_menu_send"
             android:title="我的消息" />
         <item
             android:id="@+id/nav_manage"

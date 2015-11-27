@@ -63,11 +63,9 @@ public class HomePageActivity extends AppCompatActivity
 
         mQueue = Volley.newRequestQueue(getApplicationContext());
 
-        Intent intent = this.getIntent();
-        bundle = intent.getExtras();
-
-        userid = bundle.getString("userid");
-        token = bundle.getString("token");
+        SharedPreferences sharedPreferences = getSharedPreferences("login", Activity.MODE_PRIVATE);
+        userid = sharedPreferences.getString("userid", "");
+        token = sharedPreferences.getString("token", "");
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -94,7 +92,6 @@ public class HomePageActivity extends AppCompatActivity
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(HomePageActivity.this, PostActivity.class);
-                intent.putExtras(bundle);
                 startActivity(intent);
             }
         });
@@ -213,7 +210,7 @@ public class HomePageActivity extends AppCompatActivity
         return true;
     }
 
-    private void requestUserInfo(final String userid){
+    private void requestUserInfo(final String userid) {
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, Config.BASE_URL + "user/get-userinfo",
                 new Response.Listener<String>() {
@@ -226,7 +223,7 @@ public class HomePageActivity extends AppCompatActivity
                         textView1.setText(userinfo.username);
 
                         TextView textView2 = (TextView) findViewById(R.id.textView_navHeaderHomePage_selfIntroduction);
-                        textView2.setText("userid:"+userid+"的简介（待完善）");
+                        textView2.setText("userid:" + userid + "的简介（待完善）");
 
                     }
                 }, new Response.ErrorListener() {
@@ -276,6 +273,8 @@ public class HomePageActivity extends AppCompatActivity
                                 map.put("ItemTitle", homePageList.title);
                                 map.put("ItemText", homePageList.content);
                                 map.put("ItemTime", homePageList.posttime);
+                                //这个地方精髓哈，压postId到数据数组里面，但是不和adapter绑定
+                                map.put("ItemPostId", homePageList.postid);
                                 listItem.add(map);
                             }
 
@@ -311,12 +310,13 @@ public class HomePageActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
+        if (id == R.id.nav_homePage) {
+
         } else if (id == R.id.nav_gallery) {
 
-        } else if (id == R.id.nav_slideshow) {
-
+        } else if (id == R.id.nav_myMessage) {
+            Intent intent = new Intent(HomePageActivity.this, MessageActivity.class);
+            startActivity(intent);
         } else if (id == R.id.nav_manage) {
 
         } else if (id == R.id.nav_share) {

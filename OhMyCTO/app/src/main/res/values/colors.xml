@@ -5,4 +5,5 @@
     <color name="colorAccent">#1CB5B5</color>
     <color name="colorError">#D12222</color>
     <color name="colorPostHeader">#000000</color>
+    <color name="colorBackground">#F8F8F8</color>
 </resources>

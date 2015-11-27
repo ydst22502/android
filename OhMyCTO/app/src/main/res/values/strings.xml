@@ -9,4 +9,5 @@
     <string name="title_activity_post">PostActivity</string>
     <string name="title_activity_detail">DetailActivity</string>
     <string name="title_activity_edit_my_info">EditMyInfoActivity</string>
+    <string name="title_activity_send_message">SendMessageActivity</string>
 </resources>

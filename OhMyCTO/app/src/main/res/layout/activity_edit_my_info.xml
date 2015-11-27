@@ -23,5 +23,4 @@
 
     <include layout="@layout/content_edit_my_info" />
 
-
 </android.support.design.widget.CoordinatorLayout>
